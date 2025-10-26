@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -34,10 +35,19 @@ public class CatalogLookupDataService<TLookupData, TReponse>
 
     public async Task<List<TLookupData>> List()
     {
-        var endpointName = typeof(TLookupData).GetCustomAttribute<EndpointAttribute>().Name;
-        _logger.LogInformation($"Fetching {typeof(TLookupData).Name} from API. Enpoint : {endpointName}");
+        try
+        {
+            var endpointName = typeof(TLookupData).GetCustomAttribute<EndpointAttribute>().Name;
+            _logger.LogInformation($"Fetching {typeof(TLookupData).Name} from API. Enpoint : {endpointName}");
 
-        var response = await _httpClient.GetFromJsonAsync<TReponse>($"{_apiUrl}{endpointName}");
-        return response.List;
+            var response = await _httpClient.GetFromJsonAsync<TReponse>($"{_apiUrl}{endpointName}");
+            return response.List;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error fetching {typeof(TLookupData).Name} from API: {ex.Message}");
+            throw;
+        }
     }
 }
