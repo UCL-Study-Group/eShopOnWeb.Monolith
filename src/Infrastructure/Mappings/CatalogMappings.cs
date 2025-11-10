@@ -10,21 +10,24 @@ public class CatalogMappings
     {
         TypeAdapterConfig<CatalogItemDto, CatalogItem>
             .NewConfig()
-            .MapWith(dto => new CatalogItem(
+            .ConstructUsing(dto => new CatalogItem(
                 dto.CatalogTypeId,
                 dto.CatalogBrandId,
                 dto.Description,
                 dto.Name,
                 dto.Price,
                 dto.PictureUri ?? string.Empty
-            ));
+            ))
+            .Map(dest => dest.Id, src => src.Id);
 
         TypeAdapterConfig<CatalogBrandDto, CatalogBrand>
             .NewConfig()
-            .MapWith(dto => new CatalogBrand(dto.Name));
+            .ConstructUsing(dto => new CatalogBrand(dto.Name))
+            .Map(dest => dest.Id, src => src.Id);
 
         TypeAdapterConfig<CatalogTypeDto, CatalogType>
             .NewConfig()
-            .MapWith(dto => new CatalogType(dto.Name));
+            .ConstructUsing(dto => new CatalogType(dto.Name))
+            .Map(dest => dest.Id, src => src.Id);
     }
 }
