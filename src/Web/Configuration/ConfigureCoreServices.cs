@@ -1,4 +1,5 @@
-﻿using Microsoft.eShopWeb.ApplicationCore.Interfaces;
+﻿using Microsoft.eShopWeb.ApplicationCore.Entities;
+using Microsoft.eShopWeb.ApplicationCore.Interfaces;
 using Microsoft.eShopWeb.ApplicationCore.Services;
 using Microsoft.eShopWeb.Infrastructure.Data;
 using Microsoft.eShopWeb.Infrastructure.Data.Queries;
@@ -12,6 +13,35 @@ public static class ConfigureCoreServices
     public static IServiceCollection AddCoreServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddHttpClient<HttpRepository<CatalogItem>>(client =>
+        {
+            client.BaseAddress = new Uri("http://localhost:5055");
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
+
+        services.AddHttpClient<HttpRepository<CatalogBrand>>(client =>
+        {
+            client.BaseAddress = new Uri("http://localhost:5055");
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
+
+        services.AddHttpClient<HttpRepository<CatalogType>>(client =>
+        {
+            client.BaseAddress = new Uri("http://localhost:5055");
+            client.Timeout = TimeSpan.FromSeconds(30);
+        });
+
+        // Register HttpRepository for catalog entities
+        services.AddScoped<IRepository<CatalogItem>, HttpRepository<CatalogItem>>();
+        services.AddScoped<IReadRepository<CatalogItem>, HttpRepository<CatalogItem>>();
+
+        services.AddScoped<IRepository<CatalogBrand>, HttpRepository<CatalogBrand>>();
+        services.AddScoped<IReadRepository<CatalogBrand>, HttpRepository<CatalogBrand>>();
+
+        services.AddScoped<IRepository<CatalogType>, HttpRepository<CatalogType>>();
+        services.AddScoped<IReadRepository<CatalogType>, HttpRepository<CatalogType>>();
+
+        // Keep EfRepository for other entities (Basket, Order, etc.)
         services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 
