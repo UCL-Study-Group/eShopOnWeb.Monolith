@@ -1,0 +1,26 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+  - main
+
+pool:
+  name: 'Self Hosted'
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: eShopOnWeb/eShopOnWeb.Pipelines
+      ref: refs/heads/main
+
+variables:
+  imageRepository: '$(Build.Repository.Name)'
+    
+stages:
+  - template: templates/service-pipeline-template.yml@templates
+    parameters:
+      imageRepository: $(imageRepository)
+      qodanaToken: $(QODANA_TOKEN)
+      runDeploy: ${{ ne(variables['Build.Reason'], 'PullRequest') }}
